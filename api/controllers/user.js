@@ -30,17 +30,23 @@ function saveUser(req, res){
     user.role = 'ROLE_USER';
     user.image = null;
 
-    bcrypt.hash(params.password, null, null, (err, hash) => {
-      user.password = hash;
-      user.save((err, userStored) => {
-        if(err) return res.status(500).send({message: 'Error al guardar el usuario'});
+    User.find({ $or: [ {email: user.email.toLowerCase()}, {nick: user.nick.toLowerCase()} ] }).exec( (err, users) => {
+        if (err) return res.status(500).send({message: 'Error user request'});
+        if (users && users.length >= 1) return res.status(500).send({message: 'The user already exists'})
+        else {
+          bcrypt.hash(params.password, null, null, (err, hash) => {
+            user.password = hash;
+            user.save((err, userStored) => {
+              if (err) return res.status(500).send({message: 'Error al guardar el usuario'});
 
-        if(userStored){
-          res.status(200).send({user: userStored});
-        }else {
-          res.status(404).send({message: 'No se ha registrado el usuario'})
+              if (userStored) {
+                res.status(200).send({user: userStored});
+              } else {
+                res.status(404).send({message: 'No se ha registrado el usuario'})
+              }
+            })
+          });
         }
-      })
     });
 
   }else {
@@ -48,6 +54,21 @@ function saveUser(req, res){
       message: 'Envia todos los campos necesarios!'
     });
   }
+}
+
+function loginUser(req, res){
+  var params = req.body;
+
+  var email = params.email;
+  var password = params.password;
+
+  User.findOne({email: email, password: password}, (err, user) => {
+    if (err) return res.status(500).send({message: 'Error request'});
+
+    if (user) {
+
+    }
+  });
 }
 
 module.exports = {

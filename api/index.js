@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose');
 var app = require('./app');
-var port = 3800;
+var port = 3000;
 
 mongoose.promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/mean_social', { useNewUrlParser: true })
@@ -11,7 +11,7 @@ mongoose.connect('mongodb://localhost:27017/mean_social', { useNewUrlParser: tru
 
     // crear servidor
     app.listen(port, () => {
-      console.log('Servidor corriendo en http://localhost:3800');
+      console.log('Servidor corriendo en http://localhost:3000');
     })
 
   })
